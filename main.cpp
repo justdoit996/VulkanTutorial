@@ -1,23 +1,47 @@
-#include <vulkan/vulkan.h>
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 
-#include <cstdlib>
+#include "constants.h"
+// #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
 class HelloTriangleApplication {
  public:
   void run() {
+    initWindow();
     initVulkan();
     mainLoop();
     cleanup();
   }
 
  private:
+  GLFWwindow* window_;
+
+  void initWindow() {
+    glfwInit();
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    window_ =
+        glfwCreateWindow(constants::WIDTH, constants::HEIGHT,
+                         /*Window title*/ "Vulkan Tutorial", nullptr, nullptr);
+  }
+
   void initVulkan() {}
 
-  void mainLoop() {}
+  void mainLoop() {
+    while (!glfwWindowShouldClose(window_)) {
+      glfwPollEvents();
+    }
+  }
 
-  void cleanup() {}
+  void cleanup() {
+    glfwDestroyWindow(window_);
+
+    glfwTerminate();
+  }
 };
 
 int main() {
