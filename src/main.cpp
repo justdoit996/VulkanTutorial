@@ -30,7 +30,37 @@ class HelloTriangleApplication {
                          /*Window title*/ "Vulkan Tutorial", nullptr, nullptr);
   }
 
+  bool checkValidationLayerSupport() {
+    uint32_t layerCount;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    for (const char* layerName : constants::validationLayers) {
+      bool layerFound = false;
+
+      for (const auto& layerProperties : availableLayers) {
+        if (strcmp(layerName, layerProperties.layerName) == 0) {
+          layerFound = true;
+          break;
+        }
+      }
+
+      if (!layerFound) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   void createInstance() {
+    if (constants::enableValidationLayers && !checkValidationLayerSupport()) {
+      throw std::runtime_error(
+          "validation layers requested, but not available!");
+    }
+
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "Hello Triangle";
@@ -42,6 +72,13 @@ class HelloTriangleApplication {
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
+    if (constants::enableValidationLayers) {
+      createInfo.enabledLayerCount =
+          static_cast<uint32_t>(constants::validationLayers.size());
+      createInfo.ppEnabledLayerNames = constants::validationLayers.data();
+    } else {
+      createInfo.enabledLayerCount = 0;
+    }
 
     // Extension support
     uint32_t glfwExtensionCount = 0;
