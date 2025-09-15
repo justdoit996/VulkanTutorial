@@ -80,7 +80,7 @@ class HelloTriangleApplication {
 
   void cleanup() {
     if (enableValidationLayers) {
-      // DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+      DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
     }
 
     vkDestroyInstance(instance, nullptr);
