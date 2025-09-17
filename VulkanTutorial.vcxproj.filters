@@ -19,4 +19,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\triangle_shader.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="shaders\triangle_shader.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="compile-shader.bat">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

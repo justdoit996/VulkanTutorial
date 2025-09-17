@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <optional>
@@ -82,21 +83,21 @@ class HelloTriangleApplication {
  private:
   GLFWwindow* window;
 
-  VkInstance instance;
-  VkDebugUtilsMessengerEXT debugMessenger;
-  VkSurfaceKHR surface;
+  VkInstance instance{};
+  VkDebugUtilsMessengerEXT debugMessenger{};
+  VkSurfaceKHR surface{};
 
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-  VkDevice device;
+  VkDevice device{};
 
-  VkQueue graphicsQueue;
-  VkQueue presentQueue;
+  VkQueue graphicsQueue{};
+  VkQueue presentQueue{};
 
-  VkSwapchainKHR swapChain;
-  std::vector<VkImage> swapChainImages;
-  VkFormat swapChainImageFormat;
-  VkExtent2D swapChainExtent;
-  std::vector<VkImageView> swapChainImageViews;
+  VkSwapchainKHR swapChain{};
+  std::vector<VkImage> swapChainImages{};
+  VkFormat swapChainImageFormat{};
+  VkExtent2D swapChainExtent{};
+  std::vector<VkImageView> swapChainImageViews{};
 
   void initWindow() {
     glfwInit();
@@ -118,7 +119,10 @@ class HelloTriangleApplication {
     createGraphicsPipeline();
   }
 
-  void createGraphicsPipeline() {}
+  void createGraphicsPipeline() {
+    auto vertShaderCode = readFile("shaders/vert.spv");
+    auto fragShaderCode = readFile("shaders/frag.spv");
+  }
 
   void mainLoop() {
     while (!glfwWindowShouldClose(window)) {
@@ -569,6 +573,23 @@ class HelloTriangleApplication {
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
     return VK_FALSE;
+  }
+
+  static std::vector<char> readFile(const std::string& filename) {
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
+
+    if (!file.is_open()) {
+      throw std::runtime_error("failed to open file!");
+    }
+
+    size_t fileSize = (size_t)file.tellg();
+    std::vector<char> buffer(fileSize);
+
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
+    file.close();
+
+    return buffer;
   }
 };
 
